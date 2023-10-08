@@ -1,0 +1,142 @@
+#include <Arduino.h>
+#include <PubSubClient.h>
+#include <WiFi.h>
+//WiFi configuration
+char network_ssid[30]="";
+char network_password[30]="";
+String  Ssid;
+String Password;
+//Broker configuration
+char* Broker="";
+char* sub_topic="control/productionline/motorspeed";
+char* Broker_username="";
+char* Broker_pass="";
+int Broker_port=1883;
+WiFiClient espclient;
+PubSubClient client(espclient);
+void wifi_scan();
+void Wifi_connect();
+void server_connect();
+void callback(char*topic,byte* payload,unsigned long lenght);
+#define LED 21
+#define IR 19
+#define IN1 23
+#define IN2 22
+#define EN 25
+int value=0,motorSpeed=0,Speed=0;
+void setup() {
+    Serial.begin(9600);
+    pinMode(LED,OUTPUT);
+    pinMode(IR,INPUT);
+    pinMode(IN1,OUTPUT);
+    pinMode(IN2,OUTPUT);
+    pinMode(EN,OUTPUT);
+    wifi_scan();
+    Wifi_connect();
+    client.setServer(Broker,Broker_port);
+    server_connect();
+    client.setCallback(callback);
+  
+}
+
+void loop() {
+  client.loop();
+  value = digitalRead(IR);
+  if(value==1){
+      digitalWrite(LED,LOW);
+      digitalWrite(IN1,HIGH);
+      digitalWrite(IN2,LOW);
+      analogWrite(EN,0);
+      delay(1000);
+  }
+  else{
+      digitalWrite(LED,HIGH);
+      digitalWrite(IN1,HIGH);
+      digitalWrite(IN2,LOW);
+      analogWrite(EN,motorSpeed);
+      delay(1000);
+  }
+      
+}
+void wifi_scan(){
+  Serial.println("Initializing WiFi...");
+  WiFi.mode(WIFI_STA);
+  Serial.println("Scanning...");
+  int n = WiFi.scanNetworks();  // WiFi.scanNetworks will return the number of networks found
+  Serial.println("Scan done!");
+  if (n == 0) {
+    Serial.println("No networks found.");
+  } else {
+    Serial.println();
+    Serial.print(n);
+    Serial.println(" networks found");
+    for (int i = 1; i <= n; ++i) {
+    Serial.print(i);
+    Serial.print(": ");
+    Serial.print(WiFi.SSID(i));
+    Serial.print(" (");
+    Serial.print(WiFi.RSSI(i));
+    Serial.print(")");
+    Serial.println((WiFi.encryptionType(i) == WIFI_AUTH_OPEN) ?"No password required" : "password required");
+    delay(10);
+    }
+  }
+}
+void wifi_connect(){
+ 
+  Serial.println("Entet wifi network's name please");
+  while (!Serial.available()){
+
+          }
+    Ssid=Serial.readString();
+    Ssid.trim();
+    Ssid.toCharArray(network_ssid, sizeof(network_ssid));  
+    Ssid[sizeof(Ssid) - 1] = '\0';
+    Serial.println("Entet wifi network's password please");
+  while (!Serial.available()){
+
+           }
+    Password=Serial.readString();
+    Password.trim();
+    Password.toCharArray(network_password, sizeof(network_password));  
+    Password[sizeof(Password) - 1] = '\0';
+
+    WiFi.begin(network_ssid,network_password);
+    delay(5000);
+    Serial.println("");
+    Serial.print("conneting to ");
+    Serial.print(network_ssid);
+  while(WiFi.status()!=WL_CONNECTED){
+    delay(500);
+    Serial.print(".");
+     }
+    Serial.println("");
+    Serial.println("connected ");
+}
+void server_connect(){
+  while(!client.connected()){
+       Serial.println("");
+       Serial.print("conneting to ");
+       Serial.println(Broker);
+    if(client.connect("12345ip")){
+       Serial.print("connected to ");
+       Serial.println(Broker);
+       client.subscribe(sub_topic);
+    }
+    else{
+      delay(5000);
+      Serial.println();("trying to reconnect to Broker");
+    }
+  }
+}
+  void callback(char*topic,byte* payload,unsigned long lenght){
+    String data;
+    for(int i=0;i<lenght;i++){
+      data+=((char)payload[i]);
+    }
+     Serial.println(data);
+     Speed=data.toInt();
+     motorSpeed=Speed;
+     Serial.println("motorSpeed = ");
+     Serial.println(motorSpeed);
+}
