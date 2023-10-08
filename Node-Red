@@ -1,0 +1,42 @@
+[
+    {
+        "id": "1c8496b970cdff0d",
+        "type": "ui_template",
+        "z": "36c4b23869c32fdb",
+        "g": "682c0bf77cd614ae",
+        "group": "67b7fb42cc77bb3b",
+        "name": "camera1",
+        "order": 1,
+        "width": 10,
+        "height": 6,
+        "format": "<iframe\n  loading=\"lazy\"\n  scrolling=\"no\"\n  marginwidth=\"0\"\n  marginheight=\"0\"\n  frameborder=\"0\"\n  height=\"439\"\n  width=\"553\"\n  src= \"https://www.youtube.com/embed/yX4M-QEGY4E\"\n></iframe>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "x": 580,
+        "y": 480,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "67b7fb42cc77bb3b",
+        "type": "ui_group",
+        "name": "car manual control",
+        "tab": "d736a8f5e0d39f8c",
+        "order": 2,
+        "disp": true,
+        "width": 10,
+        "collapse": false
+    },
+    {
+        "id": "d736a8f5e0d39f8c",
+        "type": "ui_tab",
+        "name": "Cargo Car",
+        "icon": "local_shipping",
+        "order": 2,
+        "disabled": false,
+        "hidden": false
+    }
+]
