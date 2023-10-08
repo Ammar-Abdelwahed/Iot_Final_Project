@@ -13,6 +13,8 @@
 //**********************************************************
 char message ;
 unsigned int Speed = 0   ;
+char direction ;
+Servo myservo;
 //***********************************************************
 void setup() {
   Serial.begin(9600) ;
@@ -39,38 +41,39 @@ message = u8GetMessage()  ;
   analogWrite(EN2,Speed) ;
 
   if (message == 'F') {
-  digitalWrite(IN1,HIGH);
-  digitalWrite(IN2,LOW);
+  digitalWrite(IN1,LOW);
+  digitalWrite(IN2,HIGH);
   digitalWrite(IN3,HIGH);
   digitalWrite(IN4,LOW);
   }
  else if (message == 'B') {
-  digitalWrite(IN1,LOW);
-  digitalWrite(IN2,HIGH);
-  digitalWrite(IN3,LOW);
-  digitalWrite(IN4,HIGH);
- }
-  else if (message == 'R') {
   digitalWrite(IN1,HIGH);
   digitalWrite(IN2,LOW);
+  digitalWrite(IN3,LOW);
+  digitalWrite(IN4,HIGH);
+  
+ }
+  else if (message == 'R') {
+  digitalWrite(IN1,LOW);
+  digitalWrite(IN2,HIGH);
   digitalWrite(IN3,LOW);
   digitalWrite(IN4,LOW);
   }
   else if (message == 'L') {
   digitalWrite(IN1,LOW);
   digitalWrite(IN2,LOW);
-  digitalWrite(IN3,HIGH);
-  digitalWrite(IN4,LOW);
+  digitalWrite(IN3,LOW);
+  digitalWrite(IN4,HIGH);
   }
   else if (message == 'O')
   {
-   Servo.write(55) ;
+   myservo.write(55) ;
   }
   else if (message =='C')
   {
-   Servo.write(135) ;
+   myservo.write(135) ;
   }
-  else {
+  else if  (message == 'S') {
   digitalWrite(IN1,LOW);
   digitalWrite(IN2,LOW);
   digitalWrite(IN3,LOW);
@@ -80,7 +83,7 @@ message = u8GetMessage()  ;
   {
   if (message == 'q')
   {
-    Speed = 255 ; // max Speed 
+    Speed = 255 ; // max Speed
   }
   else
   {
